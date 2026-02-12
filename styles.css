@@ -1,5 +1,5 @@
 :root {
-    --primary-red: #ff3366; /* Vibrant Red/Pink */
+    --primary-red: #ff0040; /* Sexy Brighter Red */
     --primary-pink: #ff8fa3;
     --bg-gradient: linear-gradient(135deg, #4a0d13 0%, #1a0204 100%); /* Deep Wine/Dark Chocolate */
     --card-bg: rgba(30, 10, 15, 0.92); /* Dark Glass */
@@ -248,7 +248,7 @@ body {
 }
 
 .modal-content {
-    background: linear-gradient(135deg, #2e0406 0%, #5e0a12 100%);
+    background: #333333;
     padding: 3rem;
     border-radius: 30px;
     text-align: center;
