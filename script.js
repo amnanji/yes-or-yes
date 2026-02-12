@@ -2,15 +2,24 @@
    CONSTANTS & DATA
    ======================== */
 const HAPPY_NEWS = [
-    "BREAKING: Local husband seen grinning uncontrollably.",
+    "BREAKING: Local husband seen grinning uncontrollably 😁.",
     "Experts confirm: today is officially 'Best Day Ever.'",
-    "BREAKING: Wife declared 'Most Wonderful Person Alive.'",
+    "BREAKING: Wife declared 'Most Wonderful Person Alive. ❤️'",
     "Meteorologists report 100% chance of hugs tonight and maybe more 😉.",
-    "BREAKING: World peace achieved (in this specific household).",
-    "Sources say: 'He knew she would say yes all along.'",
-    "Local husband planning excessive amount of chocolate purchases.",
-    "BREAKING: Husband vows to never leave wet towels on the bed again.",
-    "BREAKING: Husband permanently retiring from winning arguments (You know that ain't gonna happen 😁)."
+    "BREAKING: World peace achieved (in this specific household). 🌍❤️",
+    "Sources say: 'He knew she would say yes all along.' 😘",
+    "Local husband planning excessive amount of chocolate purchases. 🍫",
+    "BREAKING: Husband vows to never leave wet towels on the bed again. 😅",
+    "BREAKING: Husband permanently retiring from winning arguments (You know that ain't gonna happen 😁).",
+    "Local husband seen purchasing flowers in bulk. 💐",
+    "BREAKING: Husband practicing his 'I love you' in multiple languages.",
+    "Local husband spotted rehearsing romantic movie lines.",
+    "BREAKING: Husband's heart officially stolen.",
+    "Local husband reported to be smiling a lot",
+    "BREAKING: Looking for gym memberships. 🏋️‍♂️",
+    "Local husband caught daydreaming about future together.",
+    "Experts reveal too much activity on secret Snapchat account 👀",
+    "BREAKING: Husband purchases entire stock of Valentine's Day cards to write 'I love you' on each one 💌.",
 ];
 
 const SAD_NEWS = [
@@ -45,7 +54,8 @@ const SAD_NEWS = [
     "BREAKING: Husband's heart officially shattered into a million pieces.",
     "Local husband trying to find a way to bribe his wife with chocolate.",
     "BREAKING: Husband's emotional state now classified as 'disaster.'",
-    "Local Husband has given up and can not think of more things to say."
+    "Local Husband has given up and can not think of more things to say.",
+    "BREAKING BREAKING BREAKING: Husband has vowed to never ask her to be his valentine again!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 ];
 
 /* ========================
@@ -135,6 +145,19 @@ function triggerSuccess() {
     
     newsHeadline.innerText = "❤️ SHE SAID YES! ❤️";
     triggerConfetti();
+    
+    // Modal News Logic
+    const modalNewsHeadline = document.getElementById('modal-news-headline');
+    if (modalNewsHeadline) {
+        let modalNewsIndex = 0;
+        modalNewsHeadline.innerText = HAPPY_NEWS[0];
+        
+        setInterval(() => {
+            modalNewsIndex = (modalNewsIndex + 1) % HAPPY_NEWS.length;
+            modalNewsHeadline.innerText = HAPPY_NEWS[modalNewsIndex];
+        }, 3000);
+    }
+
     setTimeout(() => {
         modal.classList.remove('hidden');
     }, 500);
