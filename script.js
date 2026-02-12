@@ -8,7 +8,12 @@ const HAPPY_NEWS = [
     "Scientists baffled by unprecedented levels of love.",
     "BREAKING: Wife declared 'Most Wonderful Person Alive.'",
     "Local husband spotted doing happy dance in kitchen.",
-    "Meteorologists report 100% chance of hugs tonight."
+    "Meteorologists report 100% chance of hugs tonight.",
+    "BREAKING: World peace achieved (in this specific household).",
+    "Sources say: 'He knew she would say yes all along.'",
+    "Local husband planning excessive amount of chocolate purchases.",
+    "BREAKING: Happiness levels exceeding measurable limits.",
+    "Official Report: You are the best thing that ever happened to him."
 ];
 
 const SAD_NEWS = [
@@ -21,7 +26,12 @@ const SAD_NEWS = [
     "BREAKING: Stock market dips in response to husband’s mood.",
     "Local husband reportedly ‘rethinking everything.’",
     "BREAKING: City issues ‘Husband Sadness Advisory.’",
-    "Scientists warn: love levels critically low."
+    "Scientists warn: love levels critically low.",
+    "BREAKING: Local husband googling 'how to mend a broken heart'.",
+    "Witnesses report a single tear rolling down husband's cheek.",
+    "Local husband considering a career as a sad poetry writer.",
+    "BREAKING: Ice cream supplies running dangerously low.",
+    "Local husband asks: 'Is it me? No, it can't be me.'"
 ];
 
 /* ========================
@@ -29,9 +39,11 @@ const SAD_NEWS = [
    ======================== */
 let progress = 0;
 let isHoldingNo = false;
-let isYesClicked = false;
+let isHoldingYes = false;
+let isYesClicked = false; // Remains true once success is triggered
 let animationFrameId = null;
 let newsIntervalId = null;
+let newsIndex = 0; // Track current news item to avoid repeats
 
 // DOM Elements
 const btnYes = document.getElementById('btn-yes');
@@ -43,102 +55,129 @@ const modal = document.getElementById('modal');
 const confettiCanvas = document.getElementById('confetti-canvas');
 
 /* ========================
-   YES BUTTON LOGIC
+   YES BUTTON LOGIC (Hold to Fill)
    ======================== */
-btnYes.addEventListener('click', () => {
+const startHoldingYes = (e) => {
     if (isYesClicked) return;
-    isYesClicked = true;
+    if (e.type === 'touchstart') e.preventDefault();
+
+    isHoldingYes = true;
+    isHoldingNo = false; // Ensure we aren't holding both
+    progressFill.style.transition = 'none';
+
+    // Reset news index for a fresh start if we were at 0, or continue?
+    // User said "Do not repeat them". If they let go and press again, should it reset?
+    // Let's reset index only if progress was 0, otherwise continue.
+    if (progress <= 1) newsIndex = 0;
     
-    // Stop any No button logic
-    isHoldingNo = false;
+    lastTime = performance.now();
+    animationFrameId = requestAnimationFrame(updateYesProgress);
+    
+    cycleHappyNews();
+};
+
+const stopHoldingYes = () => {
+    if (isYesClicked) return;
+    isHoldingYes = false;
     cancelAnimationFrame(animationFrameId);
     clearInterval(newsIntervalId);
     
-    // Disable buttons
+    // Decay if not successful
+    decayProgress();
+    
+    if (!isYesClicked) {
+         newsHeadline.innerText = "Don't stop now! 💘";
+    }
+};
+
+function updateYesProgress(time) {
+    if (!isHoldingYes || isYesClicked) return;
+
+    const deltaTime = time - lastTime;
+    lastTime = time;
+
+    // Fill Speed: 0 to 100 in roughly 2.5 seconds to allow reading some news
+    // 100% / 2500ms = 0.04% per ms
+    progress += 0.05 * (deltaTime); 
+
+    if (progress >= 100) {
+        progress = 100;
+        triggerSuccess();
+    }
+
+    updateProgressUI(progress);
+    
+    if (!isYesClicked) {
+        animationFrameId = requestAnimationFrame(updateYesProgress);
+    }
+}
+
+function triggerSuccess() {
+    isYesClicked = true;
+    isHoldingYes = false;
+    
     btnYes.disabled = true;
     btnNo.disabled = true;
-
-    // Reset and prepare for fast fill
-    progress = 0;
-    updateProgressUI(0);
-    progressFill.style.transition = 'width 1.0s ease-out'; // Fast CSS transition
     
-    // Cycle Happy News
-    let newsIndex = 0;
-    newsHeadline.innerText = HAPPY_NEWS[0];
-    const happyInterval = setInterval(() => {
-        newsIndex = (newsIndex + 1) % HAPPY_NEWS.length;
-        newsHeadline.innerText = HAPPY_NEWS[newsIndex];
-    }, 150); // Fast cycle
-
-    // Trigger fill
-    requestAnimationFrame(() => {
-        progress = 100;
-        updateProgressUI(100);
-    });
-
-    // Complete after 1s
+    newsHeadline.innerText = "❤️ SHE SAID YES! ❤️";
+    triggerConfetti();
     setTimeout(() => {
-        clearInterval(happyInterval);
-        newsHeadline.innerText = "❤️ SHE SAID YES! ❤️";
-        triggerConfetti();
-        setTimeout(() => {
-            modal.classList.remove('hidden');
-        }, 500);
-    }, 1000);
-});
+        modal.classList.remove('hidden');
+    }, 500);
+}
+
+// Events for Yes Button
+btnYes.addEventListener('mousedown', startHoldingYes);
+btnYes.addEventListener('touchstart', startHoldingYes, { passive: false });
+
+btnYes.addEventListener('mouseup', stopHoldingYes);
+btnYes.addEventListener('mouseleave', stopHoldingYes);
+btnYes.addEventListener('touchend', stopHoldingYes);
+btnYes.addEventListener('touchcancel', stopHoldingYes);
+
 
 /* ========================
    NO BUTTON LOGIC (Hold to Fill)
    ======================== */
-const startHolding = (e) => {
+const startHoldingNo = (e) => {
     if (isYesClicked) return;
-    
-    // Only prevent default on touch to stop scrolling/zooming while holding
-    // but keep it on mouse so we don't block other behaviors if needed
-    if(e.type === 'touchstart') e.preventDefault();
+    if (e.type === 'touchstart') e.preventDefault();
     
     isHoldingNo = true;
-    progressFill.style.transition = 'none'; // Disable transition for direct JS control
+    isHoldingYes = false;
+    progressFill.style.transition = 'none';
     
-    // Start loop
+    if (progress <= 1) newsIndex = 0;
+
     lastTime = performance.now();
     animationFrameId = requestAnimationFrame(updateNoProgress);
     
-    // Start News Cycle
     cycleSadNews();
 };
 
-const stopHolding = () => {
+const stopHoldingNo = () => {
     if (isYesClicked) return;
     isHoldingNo = false;
     cancelAnimationFrame(animationFrameId);
     clearInterval(newsIntervalId);
-    newsHeadline.innerText = "Waiting for your answer...";
     
-    // Optional: Decay progress back to 0?
-    // User didn't specify, but it feels nicer if it doesn't just stick there forever unless requested.
-    // The prompt said "Progress pauses (or slightly decays back — your choice for humor)."
-    // Let's make it decay slowly for effect.
     decayProgress();
+    newsHeadline.innerText = "Waiting for your answer...";
 };
 
-function decayProgress() {
-    if (progress <= 0 || isHoldingNo || isYesClicked) return;
-    progress -= 2;
-    if (progress < 0) progress = 0;
-    updateProgressUI(progress);
-    requestAnimationFrame(decayProgress);
-}
-
 // Events for No Button
-btnNo.addEventListener('mousedown', startHolding);
-btnNo.addEventListener('touchstart', startHolding, { passive: false }); // Passive false to allow preventDefault
+btnNo.addEventListener('mousedown', startHoldingNo);
+btnNo.addEventListener('touchstart', startHoldingNo, { passive: false });
 
-btnNo.addEventListener('mouseup', stopHolding);
-btnNo.addEventListener('mouseleave', stopHolding);
-btnNo.addEventListener('touchend', stopHolding);
-btnNo.addEventListener('touchcancel', stopHolding);
+btnNo.addEventListener('mouseup', stopHoldingNo);
+btnNo.addEventListener('mouseleave', stopHoldingNo);
+btnNo.addEventListener('touchend', stopHoldingNo);
+btnNo.addEventListener('touchcancel', stopHoldingNo);
+
+
+/* ========================
+   SHARED LOGIC
+   ======================== */
 
 let lastTime = 0;
 
@@ -148,42 +187,57 @@ function updateNoProgress(time) {
     const deltaTime = time - lastTime;
     lastTime = time;
 
-    // Logic: 
-    // 0-90%: Linear speed
-    // 90-95%: Asymptotic decay
-    // Cap: 95%
-
-    // Speed factor: % per millisecond
-    // 0.05 per 16ms ~= 3% per second (Slow)
-    
+    // Logic: 0-90% Linear, 90-95% Asymptotic
     if (progress < 90) {
-        // Slow linear speed
         progress += 0.04 * (deltaTime / 16); 
     } else {
-        // Asymptotic approach to 95
-        // The closer we get to 95, the smaller the increment
         const distance = 95 - progress;
-        // distance gets smaller (5 -> 0.1)
-        // Add a tiny fraction of the remaining distance
         progress += distance * 0.01; 
     }
 
-    // Hard cap just in case floating point math goes weird
     if (progress > 95) progress = 95;
 
     updateProgressUI(progress);
     animationFrameId = requestAnimationFrame(updateNoProgress);
 }
 
-function cycleSadNews() {
-    let index = 0;
-    // Update immediately
-    newsHeadline.innerText = SAD_NEWS[0];
+function decayProgress() {
+    if (progress <= 0 || isHoldingNo || isHoldingYes || isYesClicked) return;
+    progress -= 2; // Decay speed
+    if (progress < 0) progress = 0;
+    updateProgressUI(progress);
+    requestAnimationFrame(decayProgress);
+}
+
+function cycleHappyNews() {
+    newsHeadline.innerText = HAPPY_NEWS[0];
+    newsIndex = 0;
     
-    // Update every 1.2s roughly
+    // Cycle every 600ms (faster than sad)
     newsIntervalId = setInterval(() => {
-        index = (index + 1) % SAD_NEWS.length;
-        newsHeadline.innerText = SAD_NEWS[index];
+        newsIndex++;
+        if (newsIndex < HAPPY_NEWS.length) {
+            newsHeadline.innerText = HAPPY_NEWS[newsIndex];
+        } else {
+            // Stop cycling, stay on last message
+            clearInterval(newsIntervalId);
+        }
+    }, 600);
+}
+
+function cycleSadNews() {
+    newsHeadline.innerText = SAD_NEWS[0];
+    newsIndex = 0;
+    
+    // Cycle every 1200ms
+    newsIntervalId = setInterval(() => {
+        newsIndex++;
+        if (newsIndex < SAD_NEWS.length) {
+            newsHeadline.innerText = SAD_NEWS[newsIndex];
+        } else {
+            // Stop cycling, stay on last message
+            clearInterval(newsIntervalId);
+        }
     }, 1200); 
 }
 
@@ -269,7 +323,6 @@ const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 if (mediaQuery.matches) {
     // Override triggerConfetti to be simpler
     triggerConfetti = () => {
-        // Just clear particles to be safe
         particles = [];
     };
 }
