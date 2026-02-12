@@ -140,6 +140,9 @@ function triggerSuccess() {
     isYesClicked = true;
     isHoldingYes = false;
     
+    // Stop background news cycling
+    clearInterval(newsIntervalId);
+    
     btnYes.disabled = true;
     btnNo.disabled = true;
     
