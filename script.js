@@ -202,22 +202,18 @@ function updateNoProgress(time) {
     const deltaTime = time - lastTime;
     lastTime = time;
 
-    // Logic: 0-90% Linear, 90-95% Asymptotic
+    // Logic: 0-90% Linear, 90-100% Asymptotic Zeno's Paradox
     if (progress < 90) {
         progress += 0.04 * (deltaTime / 16); 
     } else {
-        // Asymptotic approach to 95
-        // Distance decreases as we get closer
-        const distance = 95 - progress;
-        
-        // Slow down even more as we get closer to make decimals readable
-        // Factor of 0.005 ensures it crawls at the end
+        // Asymptotic approach to 100 (target changed from 95)
+        const distance = 100 - progress;
+        // Slow approach
         progress += distance * 0.005; 
     }
 
-    // Hard cap at 95 (or just below to keep it moving?)
-    // Let's cap at 95.00
-    if (progress > 95) progress = 95;
+    // Clamp just below 100 to prevent actual finishing
+    if (progress > 99.9999999999) progress = 99.9999999999;
 
     updateProgressUI(progress);
     animationFrameId = requestAnimationFrame(updateNoProgress);
@@ -266,9 +262,34 @@ function cycleSadNews() {
 function updateProgressUI(val) {
     progressFill.style.width = `${val}%`;
     
-    // Logic: Show integers until 94, then show decimals
-    if (val > 94) {
-        // Show 2 decimal places for dramatic effect (e.g., 94.15%)
+    // Logic: 
+    // < 94: Integer
+    // 94 - 99: 2 decimals (e.g. 94.55%)
+    // > 99: Zeno's decimals (99.9, 99.99, 99.999...)
+    
+    if (val >= 99) {
+        // Calculate distance to 100
+        const dist = 100 - val;
+        // dist of 1.0 -> 0 decimals (log 0)
+        // dist of 0.1 -> 1 decimal (log -1)
+        // dist of 0.01 -> 2 decimals (log -2)
+        
+        // We want 2 decimals at 99.00 (dist 1)
+        // So base decimals = 2.
+        // Plus magnitude of proximity.
+        
+        let decimals = 2;
+        if (dist < 1) {
+            decimals = 2 + Math.floor(-Math.log10(dist));
+        }
+        
+        // Cap at 10 decimals
+        if (decimals > 10) decimals = 10;
+        
+        progressLabel.innerText = `${val.toFixed(decimals)}%`;
+        
+    } else if (val > 94) {
+        // Transition phase with fixed 2 decimals
         progressLabel.innerText = `${val.toFixed(2)}%`;
     } else {
         progressLabel.innerText = `${Math.floor(val)}%`;
