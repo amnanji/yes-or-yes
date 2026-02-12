@@ -206,10 +206,17 @@ function updateNoProgress(time) {
     if (progress < 90) {
         progress += 0.04 * (deltaTime / 16); 
     } else {
+        // Asymptotic approach to 95
+        // Distance decreases as we get closer
         const distance = 95 - progress;
-        progress += distance * 0.01; 
+        
+        // Slow down even more as we get closer to make decimals readable
+        // Factor of 0.005 ensures it crawls at the end
+        progress += distance * 0.005; 
     }
 
+    // Hard cap at 95 (or just below to keep it moving?)
+    // Let's cap at 95.00
     if (progress > 95) progress = 95;
 
     updateProgressUI(progress);
@@ -228,7 +235,7 @@ function cycleHappyNews() {
     newsHeadline.innerText = HAPPY_NEWS[0];
     newsIndex = 0;
     
-    // Cycle every 800ms (slower than before)
+    // Cycle every 800ms
     newsIntervalId = setInterval(() => {
         newsIndex++;
         if (newsIndex < HAPPY_NEWS.length) {
@@ -244,7 +251,7 @@ function cycleSadNews() {
     newsHeadline.innerText = SAD_NEWS[0];
     newsIndex = 0;
     
-    // Cycle every 1500ms (slower than before)
+    // Cycle every 1500ms
     newsIntervalId = setInterval(() => {
         newsIndex++;
         if (newsIndex < SAD_NEWS.length) {
@@ -258,7 +265,14 @@ function cycleSadNews() {
 
 function updateProgressUI(val) {
     progressFill.style.width = `${val}%`;
-    progressLabel.innerText = `${Math.floor(val)}%`;
+    
+    // Logic: Show integers until 94, then show decimals
+    if (val > 94) {
+        // Show 2 decimal places for dramatic effect (e.g., 94.15%)
+        progressLabel.innerText = `${val.toFixed(2)}%`;
+    } else {
+        progressLabel.innerText = `${Math.floor(val)}%`;
+    }
 }
 
 /* ========================
