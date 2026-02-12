@@ -4,23 +4,13 @@
 const HAPPY_NEWS = [
     "BREAKING: Local husband seen grinning uncontrollably.",
     "Experts confirm: today is officially 'Best Day Ever.'",
-    "Local husband reportedly levitating due to joy.",
-    "Scientists baffled by unprecedented levels of love.",
     "BREAKING: Wife declared 'Most Wonderful Person Alive.'",
-    "Local husband spotted doing happy dance in kitchen.",
-    "Meteorologists report 100% chance of hugs tonight.",
+    "Meteorologists report 100% chance of hugs tonight and maybe more 😉.",
     "BREAKING: World peace achieved (in this specific household).",
     "Sources say: 'He knew she would say yes all along.'",
     "Local husband planning excessive amount of chocolate purchases.",
-    "BREAKING: Happiness levels exceeding measurable limits.",
-    "Official Report: You are the best thing that ever happened to him.",
     "BREAKING: Husband vows to never leave wet towels on the bed again.",
-    "Local husband researching 'how to cook fancy dinner' (results mixed).",
-    "Sources confirm: He loves you more than pizza.",
-    "BREAKING: Husband permanently retiring from winning arguments.",
-    "Local husband attempting to learn your favorite TikTok dance.",
-    "BREAKING: Husband promises to always let you choose the movie.",
-    "Witnesses report husband practicing his 'I was wrong' face."
+    "BREAKING: Husband permanently retiring from winning arguments (You know that ain't gonna happen 😁)."
 ];
 
 const SAD_NEWS = [
@@ -28,11 +18,11 @@ const SAD_NEWS = [
     "Local husband staring dramatically out the window.",
     "BREAKING: Emotional support cat deployed.",
     "Local husband seen listening to sad music in the rain.",
-    "BREAKING: Experts alarmed by husband’s sigh frequency.",
-    "Local bakery reports spike in ‘comfort cookies’ purchases.",
-    "BREAKING: Stock market dips in response to husband’s mood.",
-    "Local husband reportedly ‘rethinking everything.’",
-    "BREAKING: City issues ‘Husband Sadness Advisory.’",
+    "BREAKING: Experts alarmed by husband's sigh frequency.",
+    "Local bakery reports spike in 'comfort cookies' purchases.",
+    "BREAKING: Stock market dips in response to husband's mood.",
+    "Local husband reportedly 'rethinking everything.'",
+    "BREAKING: City issues 'Husband Sadness Advisory.'",
     "Scientists warn: love levels critically low.",
     "BREAKING: Local husband googling 'how to mend a broken heart'.",
     "Witnesses report a single tear rolling down husband's cheek.",
@@ -51,7 +41,11 @@ const SAD_NEWS = [
     "Local husband judging his wife very hard right now for holding 'No' for so long.",
     "Local husband contemplates if a flower would change her mind.",
     "Local husband considers deleting the 'no' button.",
-    "Local husband contemplates reaching out to Mother in Law to complain about her daughter."
+    "Local husband contemplates reaching out to Mother in Law to complain about her daughter.",
+    "BREAKING: Husband's heart officially shattered into a million pieces.",
+    "Local husband trying to find a way to bribe his wife with chocolate.",
+    "BREAKING: Husband's emotional state now classified as 'disaster.'",
+    "Local Husband has given up and can not think of more things to say."
 ];
 
 /* ========================
@@ -253,7 +247,7 @@ function cycleSadNews() {
     newsHeadline.innerText = SAD_NEWS[0];
     newsIndex = 0;
     
-    // Cycle every 3500ms (much slower)
+    // Cycle every 3000ms (much slower)
     newsIntervalId = setInterval(() => {
         newsIndex++;
         if (newsIndex < SAD_NEWS.length) {
@@ -262,7 +256,7 @@ function cycleSadNews() {
             // Stop cycling, stay on last message
             clearInterval(newsIntervalId);
         }
-    }, 3500); 
+    }, 3000); 
 }
 
 function updateProgressUI(val) {
