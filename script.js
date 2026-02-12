@@ -13,7 +13,14 @@ const HAPPY_NEWS = [
     "Sources say: 'He knew she would say yes all along.'",
     "Local husband planning excessive amount of chocolate purchases.",
     "BREAKING: Happiness levels exceeding measurable limits.",
-    "Official Report: You are the best thing that ever happened to him."
+    "Official Report: You are the best thing that ever happened to him.",
+    "BREAKING: Husband vows to never leave wet towels on the bed again.",
+    "Local husband researching 'how to cook fancy dinner' (results mixed).",
+    "Sources confirm: He loves you more than pizza.",
+    "BREAKING: Husband permanently retiring from winning arguments.",
+    "Local husband attempting to learn your favorite TikTok dance.",
+    "BREAKING: Husband promises to always let you choose the movie.",
+    "Witnesses report husband practicing his 'I was wrong' face."
 ];
 
 const SAD_NEWS = [
@@ -31,7 +38,15 @@ const SAD_NEWS = [
     "Witnesses report a single tear rolling down husband's cheek.",
     "Local husband considering a career as a sad poetry writer.",
     "BREAKING: Ice cream supplies running dangerously low.",
-    "Local husband asks: 'Is it me? No, it can't be me.'"
+    "Local husband asks: 'Is it me? No, it can't be me.'",
+    "Local husband trying to teach dog to look sad.",
+    "BREAKING: Tears detected. Send reinforcements.",
+    "Husband reportedly staring at phone, willing it to ring.",
+    "Local husband writing your name in the condensation on the window.",
+    "BREAKING: Husband considering becoming a hermit.",
+    "Local husband asks Siri: 'Why is she taking so long?'",
+    "BREAKING: Husband's playlist is now 100% Adele.",
+    "Local husband sadly eating cold pizza alone."
 ];
 
 /* ========================
@@ -213,7 +228,7 @@ function cycleHappyNews() {
     newsHeadline.innerText = HAPPY_NEWS[0];
     newsIndex = 0;
     
-    // Cycle every 600ms (faster than sad)
+    // Cycle every 800ms (slower than before)
     newsIntervalId = setInterval(() => {
         newsIndex++;
         if (newsIndex < HAPPY_NEWS.length) {
@@ -222,14 +237,14 @@ function cycleHappyNews() {
             // Stop cycling, stay on last message
             clearInterval(newsIntervalId);
         }
-    }, 600);
+    }, 800);
 }
 
 function cycleSadNews() {
     newsHeadline.innerText = SAD_NEWS[0];
     newsIndex = 0;
     
-    // Cycle every 1200ms
+    // Cycle every 1500ms (slower than before)
     newsIntervalId = setInterval(() => {
         newsIndex++;
         if (newsIndex < SAD_NEWS.length) {
@@ -238,7 +253,7 @@ function cycleSadNews() {
             // Stop cycling, stay on last message
             clearInterval(newsIntervalId);
         }
-    }, 1200); 
+    }, 1500); 
 }
 
 function updateProgressUI(val) {
