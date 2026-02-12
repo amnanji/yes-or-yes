@@ -46,7 +46,12 @@ const SAD_NEWS = [
     "BREAKING: Husband considering becoming a hermit.",
     "Local husband asks Siri: 'Why is she taking so long?'",
     "BREAKING: Husband's playlist is now 100% Adele.",
-    "Local husband sadly eating cold pizza alone."
+    "Local husband sadly eating cold pizza alone.",
+    "Local Heartbroken Husband ruins Valentine's celebration for millions.",
+    "Local husband judging his wife very hard right now for holding 'No' for so long.",
+    "Local husband contemplates if a flower would change her mind.",
+    "Local husband considers deleting the 'no' button.",
+    "Local husband contemplates reaching out to Mother in Law to complain about her daughter."
 ];
 
 /* ========================
@@ -206,14 +211,15 @@ function updateNoProgress(time) {
     if (progress < 90) {
         progress += 0.04 * (deltaTime / 16); 
     } else {
-        // Asymptotic approach to 100 (target changed from 95)
+        // Asymptotic approach to 100
         const distance = 100 - progress;
-        // Slow approach
-        progress += distance * 0.005; 
+        // Ultra-slow approach (10x slower than before)
+        progress += distance * 0.0005; 
     }
 
     // Clamp just below 100 to prevent actual finishing
-    if (progress > 99.9999999999) progress = 99.9999999999;
+    // Allow it to get very, very close (standard float precision limit)
+    if (progress > 99.99999999999999) progress = 99.99999999999999;
 
     updateProgressUI(progress);
     animationFrameId = requestAnimationFrame(updateNoProgress);
@@ -231,7 +237,7 @@ function cycleHappyNews() {
     newsHeadline.innerText = HAPPY_NEWS[0];
     newsIndex = 0;
     
-    // Cycle every 800ms
+    // Cycle every 2000ms (even slower)
     newsIntervalId = setInterval(() => {
         newsIndex++;
         if (newsIndex < HAPPY_NEWS.length) {
@@ -240,14 +246,14 @@ function cycleHappyNews() {
             // Stop cycling, stay on last message
             clearInterval(newsIntervalId);
         }
-    }, 800);
+    }, 2000);
 }
 
 function cycleSadNews() {
     newsHeadline.innerText = SAD_NEWS[0];
     newsIndex = 0;
     
-    // Cycle every 1500ms
+    // Cycle every 3500ms (much slower)
     newsIntervalId = setInterval(() => {
         newsIndex++;
         if (newsIndex < SAD_NEWS.length) {
@@ -256,7 +262,7 @@ function cycleSadNews() {
             // Stop cycling, stay on last message
             clearInterval(newsIntervalId);
         }
-    }, 1500); 
+    }, 3500); 
 }
 
 function updateProgressUI(val) {
@@ -272,19 +278,14 @@ function updateProgressUI(val) {
         const dist = 100 - val;
         // dist of 1.0 -> 0 decimals (log 0)
         // dist of 0.1 -> 1 decimal (log -1)
-        // dist of 0.01 -> 2 decimals (log -2)
-        
-        // We want 2 decimals at 99.00 (dist 1)
-        // So base decimals = 2.
-        // Plus magnitude of proximity.
         
         let decimals = 2;
         if (dist < 1) {
             decimals = 2 + Math.floor(-Math.log10(dist));
         }
         
-        // Cap at 10 decimals
-        if (decimals > 10) decimals = 10;
+        // Remove 10 digit limit, cap at 20 (JS limit)
+        if (decimals > 20) decimals = 20;
         
         progressLabel.innerText = `${val.toFixed(decimals)}%`;
         
